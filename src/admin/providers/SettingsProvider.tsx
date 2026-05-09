@@ -1,6 +1,6 @@
-import { getBackendUrl } from '@/src/lib/backend-url';
 'use client';
 
+import { getBackendUrl } from '@/src/lib/backend-url';
 import React, { createContext, useContext, useEffect, useMemo, useState, useCallback } from 'react';
 import { useAuth } from '@/src/admin/providers/GolangAuthProvider';
 

@@ -1,5 +1,6 @@
-import { getBackendUrl } from '@/src/lib/backend-url';
 'use client'
+
+import { getBackendUrl } from '@/src/lib/backend-url';
 
 /**
  * Golang Backend Authentication Provider
