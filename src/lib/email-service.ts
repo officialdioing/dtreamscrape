@@ -4,8 +4,21 @@ import { Resend } from 'resend';
 const BREVO_API_URL = 'https://api.brevo.com/v3/smtp/email';
 const brevoApiKey = process.env.BREVO_API_KEY;
 
-// Initialize Resend (backup)
-const resend = new Resend(process.env.RESEND_API_KEY);
+let resendClient: Resend | null = null;
+
+function getResendClient() {
+  const resendApiKey = process.env.RESEND_API_KEY;
+
+  if (!resendApiKey) {
+    throw new Error('RESEND_API_KEY is not set in environment variables');
+  }
+
+  if (!resendClient) {
+    resendClient = new Resend(resendApiKey);
+  }
+
+  return resendClient;
+}
 
 const FROM_EMAIL = process.env.FROM_EMAIL || 'onboarding@resend.dev';
 const BUSINESS_EMAIL = process.env.NEXT_PUBLIC_BUSINESS_EMAIL || 'systems@dioing.com';
@@ -179,7 +192,7 @@ async function sendWithResend(
   }
 
   try {
-    const data = await resend.emails.send({
+    const data = await getResendClient().emails.send({
       from: FROM_EMAIL,
       to: to,
       subject: subject,

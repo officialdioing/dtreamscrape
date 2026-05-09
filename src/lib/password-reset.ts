@@ -10,12 +10,48 @@ import { createAuditLog, AuditEventType, AuditEventCategory } from './audit-log'
 import { checkRateLimitByEmail, RATE_LIMIT_CONFIGS } from './rate-limit-auth'
 import { getUserByEmail, getUserWithPasswordByEmail } from './user-service'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+let supabaseClient: ReturnType<typeof createClient> | null = null
+let resendClient: Resend | null = null
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+function getSupabaseClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  if (!supabaseUrl) {
+    throw new Error('NEXT_PUBLIC_SUPABASE_URL is not set in environment variables')
+  }
+  if (!supabaseServiceRoleKey) {
+    throw new Error('SUPABASE_SERVICE_ROLE_KEY is not set in environment variables')
+  }
+
+  if (!supabaseClient) {
+    supabaseClient = createClient(supabaseUrl, supabaseServiceRoleKey)
+  }
+
+  return supabaseClient
+}
+
+function getResendClient() {
+  const resendApiKey = process.env.RESEND_API_KEY
+
+  if (!resendApiKey) {
+    throw new Error('RESEND_API_KEY is not set in environment variables')
+  }
+
+  if (!resendClient) {
+    resendClient = new Resend(resendApiKey)
+  }
+
+  return resendClient
+}
+
+const supabase = new Proxy({} as ReturnType<typeof createClient>, {
+  get(_target, prop) {
+    const client = getSupabaseClient() as Record<string | symbol, unknown>
+    const value = client[prop]
+    return typeof value === 'function' ? value.bind(client) : value
+  },
+}) as ReturnType<typeof createClient>
 
 // Token expiration: 1 hour
 const TOKEN_EXPIRATION_MS = 60 * 60 * 1000
@@ -88,7 +124,7 @@ export async function requestPasswordReset(email: string): Promise<{
     const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL}/admin/reset-password?token=${token}`
 
     try {
-      await resend.emails.send({
+      await getResendClient().emails.send({
         from: process.env.RESEND_FROM_EMAIL || 'noreply@dreamscapeevents.com',
         to: email,
         subject: 'Password Reset Request - Dreamscape Curated Events',

@@ -20,21 +20,14 @@ function createTimeoutFetch(timeoutMs: number) {
   };
 }
 
-if (!supabaseUrl) {
-  throw new Error('NEXT_PUBLIC_SUPABASE_URL is not set in environment variables');
-}
-if (!supabaseServiceRoleKey) {
-  throw new Error('SUPABASE_SERVICE_ROLE_KEY or NEXT_PUBLIC_SUPABASE_SECRET_KEY is not set in environment variables');
-}
-
 let adminClient: ReturnType<typeof createClient> | null = null;
 
 export function supabaseAdmin() {
   if (!supabaseUrl) {
-    throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL');
+    throw new Error('NEXT_PUBLIC_SUPABASE_URL is not set in environment variables');
   }
   if (!supabaseServiceRoleKey) {
-    throw new Error('Missing SUPABASE_SERVICE_ROLE_KEY');
+    throw new Error('SUPABASE_SERVICE_ROLE_KEY or NEXT_PUBLIC_SUPABASE_SECRET_KEY is not set in environment variables');
   }
   if (!adminClient) {
     adminClient = createClient(supabaseUrl, supabaseServiceRoleKey, {

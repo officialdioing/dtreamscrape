@@ -1,24 +1,28 @@
-import { redirect } from 'next/navigation';
+'use client';
+
+import { useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
-);
-
 export default function BookingConfirmationPage() {
-  // This page shows a booking confirmation for Supabase-backed bookings.
-
-  // Check if there's a pending booking from sessionStorage
-  if (typeof window !== 'undefined') {
+  useEffect(() => {
     const pendingBooking = sessionStorage.getItem('pendingBooking');
-    if (pendingBooking) {
-      const bookingData = JSON.parse(pendingBooking);
+    if (!pendingBooking) return;
 
-      // Save the booking to our database
-      supabase
-        .from('bookings')
-        .insert([{
+    const bookingData = JSON.parse(pendingBooking);
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+      console.error('Missing Supabase client environment variables');
+      return;
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+    supabase
+      .from('bookings')
+      .insert([
+        {
           first_name: bookingData.firstName,
           last_name: bookingData.lastName,
           email: bookingData.email,
@@ -35,16 +39,16 @@ export default function BookingConfirmationPage() {
           file_urls: bookingData.fileUrls || [],
           file_names: bookingData.fileNames || [],
           status: 'confirmed',
-        }])
-        .then(() => {
-          console.log('Booking saved to database');
-          sessionStorage.removeItem('pendingBooking');
-        })
-        .catch((error) => {
-          console.error('Failed to save booking:', error);
-        });
-    }
-  }
+        },
+      ])
+      .then(() => {
+        console.log('Booking saved to database');
+        sessionStorage.removeItem('pendingBooking');
+      })
+      .catch((error) => {
+        console.error('Failed to save booking:', error);
+      });
+  }, []);
 
   return (
     <div className="min-h-screen bg-brand-light flex items-center justify-center px-6 py-24">

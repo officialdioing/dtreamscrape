@@ -1,6 +1,20 @@
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+let resendClient: Resend | null = null;
+
+function getResendClient() {
+  const resendApiKey = process.env.RESEND_API_KEY;
+
+  if (!resendApiKey) {
+    throw new Error('RESEND_API_KEY is not set in environment variables');
+  }
+
+  if (!resendClient) {
+    resendClient = new Resend(resendApiKey);
+  }
+
+  return resendClient;
+}
 
 const FROM_EMAIL = process.env.FROM_EMAIL || 'noreply@dreamscape-events.com';
 const BUSINESS_EMAIL = process.env.NEXT_PUBLIC_BUSINESS_EMAIL || 'info@dreamscapeevent.com';
@@ -105,7 +119,7 @@ export async function sendCustomerConfirmationEmail(booking: BookingDetails) {
     const googleCalendarLink = generateGoogleCalendarLink(booking);
     const icsContent = generateICSContent(booking, true);
 
-    const { data, error } = await resend.emails.send({
+    const { data, error } = await getResendClient().emails.send({
       from: FROM_EMAIL,
       to: booking.email,
       subject: 'Consultation Booking Confirmed - Dreamscape Curated Events',
@@ -268,7 +282,7 @@ export async function sendBusinessNotificationEmail(booking: BookingDetails) {
     const googleCalendarLink = generateGoogleCalendarLink(booking);
     const icsContent = generateICSContent(booking, false);
 
-    const { data, error } = await resend.emails.send({
+    const { data, error } = await getResendClient().emails.send({
       from: FROM_EMAIL,
       to: BUSINESS_EMAIL,
       subject: `🎉 New Consultation Booking: ${booking.first_name} ${booking.last_name}`,

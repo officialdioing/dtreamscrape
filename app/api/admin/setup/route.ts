@@ -8,14 +8,30 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { hashPassword } from '@/src/lib/password'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+let supabaseClient: ReturnType<typeof createClient> | null = null
+
+function getSupabaseClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  if (!supabaseUrl) {
+    throw new Error('NEXT_PUBLIC_SUPABASE_URL is not set in environment variables')
+  }
+  if (!supabaseServiceRoleKey) {
+    throw new Error('SUPABASE_SERVICE_ROLE_KEY is not set in environment variables')
+  }
+
+  if (!supabaseClient) {
+    supabaseClient = createClient(supabaseUrl, supabaseServiceRoleKey)
+  }
+
+  return supabaseClient
+}
 
 export async function POST(request: NextRequest) {
   try {
     // Check if any users already exist
+    const supabase = getSupabaseClient()
     const { data: existingUsers, error: countError } = await supabase
       .from('users')
       .select('id', { count: 'exact', head: true })
@@ -101,6 +117,7 @@ export async function POST(request: NextRequest) {
  */
 export async function GET() {
   try {
+    const supabase = getSupabaseClient()
     const { data: existingUsers, error: countError } = await supabase
       .from('users')
       .select('id', { count: 'exact', head: true })

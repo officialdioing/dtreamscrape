@@ -8,10 +8,34 @@ import { hashPassword, verifyPassword, validatePassword } from './password'
 import { createAuditLog, AuditEventType, AuditEventCategory } from './audit-log'
 import { checkRateLimitByUserId } from './rate-limit-auth'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+let supabaseClient: ReturnType<typeof createClient> | null = null
+
+function getSupabaseClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  if (!supabaseUrl) {
+    throw new Error('NEXT_PUBLIC_SUPABASE_URL is not set in environment variables')
+  }
+
+  if (!supabaseServiceRoleKey) {
+    throw new Error('SUPABASE_SERVICE_ROLE_KEY is not set in environment variables')
+  }
+
+  if (!supabaseClient) {
+    supabaseClient = createClient(supabaseUrl, supabaseServiceRoleKey)
+  }
+
+  return supabaseClient
+}
+
+const supabase = new Proxy({} as ReturnType<typeof createClient>, {
+  get(_target, prop) {
+    const client = getSupabaseClient() as Record<string | symbol, unknown>
+    const value = client[prop]
+    return typeof value === 'function' ? value.bind(client) : value
+  },
+}) as ReturnType<typeof createClient>
 
 export interface CreateUserInput {
   email: string
