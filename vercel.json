@@ -1,9 +1,6 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "next build",
   "outputDirectory": ".next",
   "framework": "nextjs",
-  "installCommand": "npm install",
-  "env": {
-    "NEXT_PRIVATE_SKIP_TYPESCRIPT_VALIDATION": "true"
-  }
+  "installCommand": "npm install"
 }
