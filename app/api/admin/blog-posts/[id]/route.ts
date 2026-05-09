@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getBackendUrl } from '@/src/lib/backend-url';
 import { revalidateTag } from 'next/cache';
 import { CACHE_TAGS } from '@/src/lib/cached-posts';
 import { protectAdminRoute } from '@/src/lib/server-auth';
 import { triggerContentWebhook } from '@/src/lib/content-webhook';
-
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:8080';
 
 /**
  * GET /api/admin/blog-posts/[id]
@@ -21,7 +20,7 @@ export async function GET(
   const key = (id || '').trim().replace(/\s+/g, '');
 
   try {
-    const response = await fetch(`${BACKEND_URL}/api/admin/blog-posts/${key}`, {
+    const response = await fetch(`${getBackendUrl()}/api/admin/blog-posts/${key}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -68,7 +67,7 @@ export async function PUT(
   const body = await request.json();
 
   try {
-    const response = await fetch(`${BACKEND_URL}/api/admin/blog-posts/${key}`, {
+    const response = await fetch(`${getBackendUrl()}/api/admin/blog-posts/${key}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -132,7 +131,7 @@ export async function DELETE(
   const key = (id || '').trim().replace(/\s+/g, '');
 
   try {
-    const response = await fetch(`${BACKEND_URL}/api/admin/blog-posts/${key}`, {
+    const response = await fetch(`${getBackendUrl()}/api/admin/blog-posts/${key}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',

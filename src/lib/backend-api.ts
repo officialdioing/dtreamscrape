@@ -5,7 +5,7 @@
  * It handles authentication, error handling, and response formatting.
  */
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:8080';
+import { getBackendUrl } from '@/src/lib/backend-url';
 
 interface BackendApiResponse<T = any> {
   data?: T;

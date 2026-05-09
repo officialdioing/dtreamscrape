@@ -1,7 +1,7 @@
 import 'server-only';
 import { unstable_cache } from 'next/cache';
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:8080';
+import { getBackendUrl } from '@/src/lib/backend-url';
 
 export interface BackendService {
   id: string;
@@ -21,7 +21,8 @@ export interface BackendService {
 }
 
 async function fetchFromBackend(path: string): Promise<any> {
-  const url = `${BACKEND_URL}/api${path}`;
+  const backendUrl = getBackendUrl();
+  const url = `${backendUrl}/api${path}`;
 
   const response = await fetch(url, {
     method: 'GET',

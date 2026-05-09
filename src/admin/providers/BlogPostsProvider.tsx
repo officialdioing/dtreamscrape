@@ -1,3 +1,4 @@
+import { getBackendUrl } from '@/src/lib/backend-url';
 'use client';
 
 import React, { createContext, useContext, useEffect, useMemo, useState, useCallback } from 'react';
@@ -147,7 +148,7 @@ export function BlogPostsProvider({ children }: { children: React.ReactNode }) {
 
     setIsLoading(true);
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:8080';
+      const backendUrl = getBackendUrl();
       const token = getAccessToken();
 
       console.log('🔐 Blog Posts Auth:', {
@@ -227,7 +228,7 @@ export function BlogPostsProvider({ children }: { children: React.ReactNode }) {
     if (!key) return null;
 
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:8080';
+      const backendUrl = getBackendUrl();
       const token = getAccessToken();
 
       const headers: Record<string, string> = {
@@ -309,7 +310,7 @@ export function BlogPostsProvider({ children }: { children: React.ReactNode }) {
     };
 
     const routeKey = post?.id || post?.__raw?.id || post?.__raw?.slug || slug;
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:8080';
+    const backendUrl = getBackendUrl();
     const endpoint =
       mode === 'create'
         ? `${backendUrl}/api/admin/portfolio-items`
@@ -342,7 +343,7 @@ export function BlogPostsProvider({ children }: { children: React.ReactNode }) {
   };
 
   const deletePost: BlogPostsContextValue['deletePost'] = async (id) => {
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:8080';
+    const backendUrl = getBackendUrl();
     const token = getAccessToken();
 
     const headers: Record<string, string> = {

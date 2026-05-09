@@ -2,7 +2,7 @@ import 'server-only';
 import { unstable_cache } from 'next/cache';
 import { CACHE_TAGS } from '@/src/lib/cached-posts';
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:8080';
+import { getBackendUrl } from '@/src/lib/backend-url';
 
 export interface BackendPortfolioItem {
   id: string;
@@ -29,7 +29,8 @@ export interface BackendPortfolioItem {
 }
 
 async function fetchFromBackend(path: string): Promise<any> {
-  const url = `${BACKEND_URL}/api${path}`;
+  const backendUrl = getBackendUrl();
+  const url = `${backendUrl}/api${path}`;
 
   const response = await fetch(url, {
     method: 'GET',

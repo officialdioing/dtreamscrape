@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:8080';
+import { getBackendUrl } from '@/src/lib/backend-url';
 
 /**
  * GET /api/admin/portfolio-items
@@ -10,7 +9,7 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost
 export async function GET(request: NextRequest) {
   try {
     // Forward the request with authentication cookies
-    const response = await fetch(`${BACKEND_URL}/api/admin/portfolio-items`, {
+    const response = await fetch(`${getBackendUrl()}/api/admin/portfolio-items`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -49,7 +48,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    const response = await fetch(`${BACKEND_URL}/api/admin/portfolio-items`, {
+    const response = await fetch(`${getBackendUrl()}/api/admin/portfolio-items`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

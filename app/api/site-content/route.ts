@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getBackendUrl } from '@/src/lib/backend-url';
 import { CACHE_DURATION } from '@/src/lib/cache';
 import { revalidateTag } from 'next/cache';
 import { SITE_CONTENT_CACHE_TAGS } from '@/src/lib/backend-content';
-
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:8080';
 
 function isDatabaseUnavailableError(error: any) {
   const message = String(error?.message || '');
@@ -39,7 +38,7 @@ export async function GET(request: NextRequest) {
     if (page) backendParams.set('page', page);
     if (section) backendParams.set('section', section);
 
-    const backendUrl = `${BACKEND_URL}/api/content${backendParams.toString() ? `?${backendParams.toString()}` : ''}`;
+    const backendUrl = `${getBackendUrl()}/api/content${backendParams.toString() ? `?${backendParams.toString()}` : ''}`;
 
     const response = await fetch(backendUrl, {
       method: 'GET',

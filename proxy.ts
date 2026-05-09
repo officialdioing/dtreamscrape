@@ -43,7 +43,10 @@ export async function proxy(request: any) {
     // Optionally validate token with backend (adds latency, so disabled by default)
     // Uncomment if you want server-side token validation
     /*
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:8080'
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL
+    if (!backendUrl) {
+      throw new Error('NEXT_PUBLIC_BACKEND_API_URL environment variable must be set')
+    }
     const validationResult = await fetch(`${backendUrl}/api/auth/me`, {
       headers: {
         'Authorization': `Bearer ${accessToken}`

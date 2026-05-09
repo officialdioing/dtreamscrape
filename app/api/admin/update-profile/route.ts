@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:8080';
+import { getBackendUrl } from '@/src/lib/backend-url';
 
 /**
  * POST /api/admin/update-profile
@@ -87,7 +86,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get current user info
-    const meResponse = await fetch(`${BACKEND_URL}/api/auth/me`, {
+    const meResponse = await fetch(`${getBackendUrl()}/api/auth/me`, {
       method: 'GET',
       headers: {
         'Authorization': authHeader,
@@ -121,7 +120,7 @@ export async function POST(request: NextRequest) {
 
     // Update profile using admin endpoint
     // Note: first_name and last_name are stored in metadata, not as separate DB columns
-    const updateResponse = await fetch(`${BACKEND_URL}/api/admin/users/${currentUserId}`, {
+    const updateResponse = await fetch(`${getBackendUrl()}/api/admin/users/${currentUserId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

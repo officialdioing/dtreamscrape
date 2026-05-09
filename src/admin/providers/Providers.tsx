@@ -1,3 +1,4 @@
+import { getBackendUrl } from '@/src/lib/backend-url';
 'use client'
 
 import React from 'react'

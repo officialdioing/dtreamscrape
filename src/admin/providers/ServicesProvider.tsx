@@ -1,3 +1,4 @@
+import { getBackendUrl } from '@/src/lib/backend-url';
 'use client';
 
 import React, { createContext, useContext, useEffect, useMemo, useState, useCallback } from 'react';
@@ -42,7 +43,7 @@ export function ServicesProvider({ children }: { children: React.ReactNode }) {
 
     setIsLoading(true);
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:8080';
+      const backendUrl = getBackendUrl();
       const token = getAccessToken();
 
       const headers: Record<string, string> = {
@@ -73,7 +74,7 @@ export function ServicesProvider({ children }: { children: React.ReactNode }) {
   }, [isAuthenticated, refresh]);
 
   const createService = async (payload: Partial<ServiceItem>) => {
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:8080';
+    const backendUrl = getBackendUrl();
     const token = getAccessToken();
 
     const headers: Record<string, string> = {
@@ -96,7 +97,7 @@ export function ServicesProvider({ children }: { children: React.ReactNode }) {
   };
 
   const updateService = async (id: string, payload: Partial<ServiceItem>) => {
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:8080';
+    const backendUrl = getBackendUrl();
     const token = getAccessToken();
 
     const headers: Record<string, string> = {
@@ -127,7 +128,7 @@ export function ServicesProvider({ children }: { children: React.ReactNode }) {
   };
 
   const deleteService = async (id: string) => {
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:8080';
+    const backendUrl = getBackendUrl();
     const token = getAccessToken();
 
     const headers: Record<string, string> = {

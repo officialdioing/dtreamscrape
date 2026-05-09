@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:8080';
+import { getBackendUrl } from '@/src/lib/backend-url';
 
 /**
  * POST /api/admin/change-password
@@ -45,7 +44,7 @@ export async function POST(request: NextRequest) {
       headers['Authorization'] = authHeader;
     }
 
-    const response = await fetch(`${BACKEND_URL}/api/auth/change-password`, {
+    const response = await fetch(`${getBackendUrl()}/api/auth/change-password`, {
       method: 'POST',
       headers,
       credentials: 'include',

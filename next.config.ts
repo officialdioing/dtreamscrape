@@ -43,7 +43,10 @@ const nextConfig: NextConfig = {
 
   // Proxy API requests to Go backend
   async rewrites() {
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:8080';
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL;
+    if (!backendUrl) {
+      throw new Error('NEXT_PUBLIC_BACKEND_API_URL environment variable must be set for API rewrites');
+    }
 
     return [
       // Portfolio items (Go backend)

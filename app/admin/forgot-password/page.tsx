@@ -1,4 +1,5 @@
 'use client'
+import { getBackendUrl } from '@/src/lib/backend-url';
 
 import * as React from 'react'
 import { motion } from 'framer-motion'
@@ -32,7 +33,7 @@ export default function ForgotPasswordPage() {
 
     setIsLoading(true)
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:8080'
+      const backendUrl = getBackendUrl()
       const response = await fetch(`${backendUrl}/api/auth/forgot-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

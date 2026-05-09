@@ -1,3 +1,4 @@
+import { getBackendUrl } from '@/src/lib/backend-url';
 'use client';
 
 import React, { createContext, useContext, useEffect, useMemo, useState, useCallback } from 'react';
@@ -55,7 +56,7 @@ export function MediaProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(true);
     setError(null);
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:8080';
+      const backendUrl = getBackendUrl();
       const token = getAccessToken();
 
       const headers: Record<string, string> = {
@@ -90,7 +91,7 @@ export function MediaProvider({ children }: { children: React.ReactNode }) {
   }, [isAuthenticated, refresh]);
 
   const createMedia: MediaContextValue['createMedia'] = async (draft) => {
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:8080';
+    const backendUrl = getBackendUrl();
     const token = getAccessToken();
 
     const headers: Record<string, string> = {
@@ -113,7 +114,7 @@ export function MediaProvider({ children }: { children: React.ReactNode }) {
   };
 
   const updateMedia: MediaContextValue['updateMedia'] = async (id, draft) => {
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:8080';
+    const backendUrl = getBackendUrl();
     const token = getAccessToken();
 
     const headers: Record<string, string> = {
@@ -136,7 +137,7 @@ export function MediaProvider({ children }: { children: React.ReactNode }) {
   };
 
   const deleteMedia: MediaContextValue['deleteMedia'] = async (id) => {
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:8080';
+    const backendUrl = getBackendUrl();
     const token = getAccessToken();
 
     const headers: Record<string, string> = {

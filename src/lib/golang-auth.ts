@@ -47,12 +47,7 @@ export interface AuthResponse {
   user: GolangUser
 }
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:8080'
-
-// Log warning in development if using localhost
-if (typeof window !== 'undefined' && BACKEND_URL.includes('localhost')) {
-  console.warn('⚠️ Using localhost backend URL. Ensure NEXT_PUBLIC_BACKEND_API_URL is set in production.')
-}
+import { getBackendUrl } from '@/src/lib/backend-url';
 
 /**
  * OAuth 2.0 Login Functions
