@@ -90,16 +90,17 @@ export async function PUT(
     const item = data.item ?? data;
 
     // Revalidate cache after update
-    revalidateTag(CACHE_TAGS.BLOG_LIST);
-    revalidateTag(CACHE_TAGS.PORTFOLIO_LIST);
-    if (item?.slug) {
-      revalidateTag(CACHE_TAGS.BLOG_POST(item.slug));
-      revalidateTag(CACHE_TAGS.PORTFOLIO_ITEM(item.slug));
-    }
-    if (item?.id) {
-      revalidateTag(CACHE_TAGS.BLOG_POST(item.id));
-      revalidateTag(CACHE_TAGS.PORTFOLIO_ITEM(item.id));
-    }
+    // TODO: Fix revalidateTag for Next.js 16
+    // revalidateTag(CACHE_TAGS.BLOG_LIST);
+    // revalidateTag(CACHE_TAGS.PORTFOLIO_LIST);
+    // if (item?.slug) {
+    //   revalidateTag(CACHE_TAGS.BLOG_POST(item.slug));
+    //   revalidateTag(CACHE_TAGS.PORTFOLIO_ITEM(item.slug));
+    // }
+    // if (item?.id) {
+    //   revalidateTag(CACHE_TAGS.BLOG_POST(item.id));
+    //   revalidateTag(CACHE_TAGS.PORTFOLIO_ITEM(item.id));
+    // }
 
     void triggerContentWebhook('update', 'blog', {
       id: item?.id,
@@ -152,16 +153,17 @@ export async function DELETE(
     const item = data.item ?? data;
 
     // Revalidate cache after delete
-    revalidateTag(CACHE_TAGS.BLOG_LIST);
-    revalidateTag(CACHE_TAGS.PORTFOLIO_LIST);
-    if (item?.slug) {
-      revalidateTag(CACHE_TAGS.BLOG_POST(item.slug));
-      revalidateTag(CACHE_TAGS.PORTFOLIO_ITEM(item.slug));
-    }
-    if (item?.id) {
-      revalidateTag(CACHE_TAGS.BLOG_POST(item.id));
-      revalidateTag(CACHE_TAGS.PORTFOLIO_ITEM(item.id));
-    }
+    // TODO: Fix revalidateTag for Next.js 16
+    // revalidateTag(CACHE_TAGS.BLOG_LIST);
+    // revalidateTag(CACHE_TAGS.PORTFOLIO_LIST);
+    // if (item?.slug) {
+    //   revalidateTag(CACHE_TAGS.BLOG_POST(item.slug));
+    //   revalidateTag(CACHE_TAGS.PORTFOLIO_ITEM(item.slug));
+    // }
+    // if (item?.id) {
+    //   revalidateTag(CACHE_TAGS.BLOG_POST(item.id));
+    //   revalidateTag(CACHE_TAGS.PORTFOLIO_ITEM(item.id));
+    // }
 
     void triggerContentWebhook('delete', 'blog', {
       id: item?.id,

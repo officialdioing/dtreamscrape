@@ -14,10 +14,11 @@ import { lockUserAccount, unlockUserAccount } from '@/src/lib/user-service'
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const admin = await requireAdminUser()
+    const { id } = await params
 
     const body = await request.json()
     const { durationMinutes } = body
@@ -63,12 +64,13 @@ export async function POST(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const admin = await requireAdminUser()
+    const { id } = await params
 
-    const result = await unlockUserAccount(params.id, admin.id)
+    const result = await unlockUserAccount(id, admin.id)
 
     if (!result.success) {
       return NextResponse.json(

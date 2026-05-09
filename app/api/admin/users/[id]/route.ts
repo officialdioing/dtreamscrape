@@ -16,12 +16,13 @@ import { checkRateLimitByIp } from '@/src/lib/rate-limit-auth'
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAdminUser()
+    const { id } = await params
 
-    const user = await getUserById(params.id)
+    const user = await getUserById(id)
 
     if (!user) {
       return NextResponse.json(
@@ -55,15 +56,16 @@ export async function GET(
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const admin = await requireAdminUser()
+    const { id } = await params
 
     const body = await request.json()
     const { email, name, role, isActive } = body
 
-    const result = await updateUser(params.id, {
+    const result = await updateUser(id, {
       email,
       name,
       role,
@@ -103,20 +105,21 @@ export async function PATCH(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const admin = await requireAdminUser()
+    const { id } = await params
 
     // Prevent self-deletion
-    if (params.id === admin.id) {
+    if (id === admin.id) {
       return NextResponse.json(
         { error: 'Cannot delete your own account' },
         { status: 400 }
       )
     }
 
-    const result = await deleteUser(params.id, admin.id)
+    const result = await deleteUser(id, admin.id)
 
     if (!result.success) {
       return NextResponse.json(
