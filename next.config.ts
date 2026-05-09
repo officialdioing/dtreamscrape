@@ -43,10 +43,8 @@ const nextConfig: NextConfig = {
 
   // Proxy API requests to Go backend
   async rewrites() {
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL;
-    if (!backendUrl) {
-      throw new Error('NEXT_PUBLIC_BACKEND_API_URL environment variable must be set for API rewrites');
-    }
+    // Use fallback for build time, but runtime will use actual environment variable
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'https://api.dreamscapecurated.com';
 
     return [
       // Portfolio items (Go backend)
