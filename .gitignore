@@ -35,3 +35,4 @@ dist-ssr
 .vercel
 .env*.local
 .next.backup.bak/
+.env.production
