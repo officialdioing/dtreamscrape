@@ -43,6 +43,26 @@ export interface RateLimitIdentifier {
   value: string
 }
 
+let supabaseClient: ReturnType<typeof createClient> | null = null
+
+function getSupabaseClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  if (!supabaseUrl) {
+    throw new Error('NEXT_PUBLIC_SUPABASE_URL is not set in environment variables')
+  }
+  if (!supabaseServiceRoleKey) {
+    throw new Error('SUPABASE_SERVICE_ROLE_KEY is not set in environment variables')
+  }
+
+  if (!supabaseClient) {
+    supabaseClient = createClient(supabaseUrl, supabaseServiceRoleKey)
+  }
+
+  return supabaseClient
+}
+
 /**
  * Get client IP address from request headers
  */
@@ -103,10 +123,7 @@ export async function checkRateLimit(
   requestType: keyof typeof RATE_LIMIT_CONFIGS
 ): Promise<RateLimitResult> {
   const config = RATE_LIMIT_CONFIGS[requestType]
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  )
+  const supabase = getSupabaseClient()
 
   const identifierString = createRateLimitIdentifier(identifier)
   const now = new Date()
@@ -260,12 +277,8 @@ export async function resetRateLimit(
   identifier: RateLimitIdentifier,
   requestType: keyof typeof RATE_LIMIT_CONFIGS
 ): Promise<boolean> {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  )
-
   try {
+    const supabase = getSupabaseClient()
     const { error } = await supabase
       .from('rate_limits')
       .delete()
@@ -359,12 +372,8 @@ export async function getRateLimitStatus(
   isLocked: boolean
   lockedUntil: Date | null
 }> {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  )
-
   try {
+    const supabase = getSupabaseClient()
     const { data, error } = await supabase
       .from('rate_limits')
       .select('*')
