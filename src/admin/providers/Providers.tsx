@@ -1,6 +1,6 @@
-import { getBackendUrl } from '@/src/lib/backend-url';
 'use client'
 
+import { getBackendUrl } from '@/src/lib/backend-url';
 import React from 'react'
 import { GolangAuthProvider } from './GolangAuthProvider'
 import { BlogPostsProvider } from './BlogPostsProvider'
