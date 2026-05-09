@@ -3,19 +3,14 @@ import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { AdminThemeCleanup } from '@/src/admin/components/AdminThemeCleanup';
 import { Providers } from '@/src/admin/providers/Providers';
-import { Inter, Playfair_Display } from 'next/font/google';
-
-const adminBodyFont = Inter({
-  subsets: ['latin'],
-  display: 'swap',
+// Using local font fallbacks to avoid build-time Google Fonts download issues
+const adminBodyFont = {
   variable: '--font-admin-body',
-});
+};
 
-const adminHeadingFont = Playfair_Display({
-  subsets: ['latin'],
-  display: 'swap',
+const adminHeadingFont = {
   variable: '--font-admin-heading',
-});
+};
 
 export const metadata: Metadata = {
   title: 'CMS Admin Portal',
