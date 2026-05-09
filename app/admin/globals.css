@@ -1,0 +1,119 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+:root {
+  --background: #fcfaf7;
+  --foreground: #211b25;
+  --card: #ffffff;
+  --card-foreground: #211b25;
+  --popover: #ffffff;
+  --popover-foreground: #211b25;
+  --primary: #40153f;
+  --primary-foreground: #fffdfb;
+  --secondary: #f4ecf3;
+  --secondary-foreground: #40153f;
+  --muted: #f5efea;
+  --muted-foreground: #756b73;
+  --accent: #e8d4e1;
+  --accent-foreground: #40153f;
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: #fff;
+  --border: #e8dfdf;
+  --input: #e8dfdf;
+  --ring: #c66493;
+  --radius: 0.625rem;
+}
+
+html.dark {
+  --background: #130f18;
+  --foreground: #f8f5f2;
+  --card: #1b1622;
+  --card-foreground: #f8f5f2;
+  --popover: #201a28;
+  --popover-foreground: #f8f5f2;
+  --primary: #d17aa3;
+  --primary-foreground: #1a1220;
+  --secondary: #241e2d;
+  --secondary-foreground: #f8f5f2;
+  --muted: #1f1926;
+  --muted-foreground: #b9b0bc;
+  --accent: #2f243c;
+  --accent-foreground: #f8f5f2;
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: #fff;
+  --border: rgba(255, 255, 255, 0.02);
+  --input: rgba(255, 255, 255, 0.02);
+  --ring: #d17aa3;
+}
+
+@layer base {
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    background-image:
+      radial-gradient(circle at top left, rgba(209, 122, 163, 0.14), transparent 30%),
+      radial-gradient(circle at top right, rgba(231, 200, 74, 0.08), transparent 28%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(252, 250, 247, 1));
+  }
+
+  html.dark body {
+    background-image:
+      radial-gradient(circle at top left, rgba(209, 122, 163, 0.12), transparent 32%),
+      radial-gradient(circle at top right, rgba(231, 200, 74, 0.06), transparent 28%),
+      linear-gradient(180deg, rgba(15, 12, 20, 0.98), rgba(19, 15, 24, 1));
+  }
+
+  html.dark [class*='bg-white'] {
+    background-color: var(--card) !important;
+  }
+
+  html.dark [class*='bg-gray-100'] {
+    background-color: var(--muted) !important;
+  }
+
+  html.dark [class*='bg-slate-50'] {
+    background-color: var(--muted) !important;
+  }
+
+  html.dark [class*='border-gray-'],
+  html.dark [class*='border-slate-'] {
+    border-color: var(--border) !important;
+  }
+
+  html.dark [class*='border-border'],
+  html.dark [class*='border-gray-'],
+  html.dark [class*='border-slate-'],
+  html.dark [class*='border-input'] {
+    border-color: rgba(255, 255, 255, 0.02) !important;
+  }
+
+  html.dark [class*='divide-border'],
+  html.dark [class*='divide-gray-'],
+  html.dark [class*='divide-slate-'] {
+    border-color: rgba(255, 255, 255, 0.02) !important;
+  }
+
+  html.dark [class*='divide-border'] > * + *,
+  html.dark [class*='divide-gray-'] > * + *,
+  html.dark [class*='divide-slate-'] > * + * {
+    border-color: rgba(255, 255, 255, 0.02) !important;
+  }
+
+  html.dark [class*='text-gray-900'],
+  html.dark [class*='text-gray-800'],
+  html.dark [class*='text-gray-700'],
+  html.dark [class*='text-gray-600'],
+  html.dark [class*='text-gray-500'],
+  html.dark [class*='text-slate-950'],
+  html.dark [class*='text-slate-900'] {
+    color: var(--foreground) !important;
+  }
+
+  html.dark [class*='text-gray-400'],
+  html.dark [class*='text-gray-300'],
+  html.dark [class*='text-slate-500'],
+  html.dark [class*='text-slate-400'] {
+    color: var(--muted-foreground) !important;
+  }
+}

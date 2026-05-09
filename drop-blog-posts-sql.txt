@@ -1,0 +1,14 @@
+-- Drop the blog_posts table and its dependencies
+-- Run this in your Supabase Dashboard SQL Editor
+
+-- First, check what's in the table
+SELECT COUNT(*) as record_count FROM blog_posts;
+
+-- Drop the table (CASCADE will automatically drop dependent objects)
+DROP TABLE IF EXISTS public.blog_posts CASCADE;
+
+-- Verify it's gone
+SELECT table_name 
+FROM information_schema.tables 
+WHERE table_schema = 'public' 
+  AND table_name = 'blog_posts';

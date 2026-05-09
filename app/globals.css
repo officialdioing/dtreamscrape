@@ -1,0 +1,88 @@
+/* --- MANAGED FONT IMPORTS START (do not edit manually) --- */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&display=swap');
+
+/* --- MANAGED FONT IMPORTS END --- */
+
+/* @import url() FONT IMPORTS MUST ALWAYS BE AT THE VERY TOP OF THIS FILE, ABOVE THE TAILWIND IMPORTS — DO NOT DELETE THIS COMMENT */
+
+/* CRITICAL: THE FOLLOWING TAILWIND IMPORTS MUST NEVER BE DELETED OR REORDERED — DO NOT DELETE THIS COMMENT */
+@import 'photoswipe/style.css';
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* END TAILWIND IMPORTS — ALL OTHER CSS MUST GO BELOW THIS LINE */
+
+:root {
+  --background: #fcfaf7;
+  --foreground: #211b25;
+  --card: #ffffff;
+  --card-foreground: #211b25;
+  --popover: #ffffff;
+  --popover-foreground: #211b25;
+  --primary: #40153f;
+  --primary-foreground: #fffdfb;
+  --secondary: #f4ecf3;
+  --secondary-foreground: #40153f;
+  --muted: #f5efea;
+  --muted-foreground: #756b73;
+  --accent: #e8d4e1;
+  --accent-foreground: #40153f;
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.577 0.245 27.325);
+  --border: #e8dfdf;
+  --input: #e8dfdf;
+  --ring: #c66493;
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --radius: 0.625rem;
+  --sidebar: #fffdfb;
+  --sidebar-foreground: #211b25;
+  --sidebar-primary: #40153f;
+  --sidebar-primary-foreground: #fffdfb;
+  --sidebar-accent: #f4ecf3;
+  --sidebar-accent-foreground: #40153f;
+  --sidebar-border: #e8dfdf;
+  --sidebar-ring: #c66493;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-brand-dark font-sans antialiased;
+    background-image:
+      radial-gradient(circle at top left, rgba(196, 100, 147, 0.07), transparent 28%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(252, 250, 247, 1));
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-serif;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .glass-nav {
+    @apply bg-white/80 backdrop-blur-xl border-b border-brand-purple/10 shadow-[0_10px_40px_rgba(64,21,63,0.06)];
+  }
+}
+
+body.not-found-route {
+  background-image:
+    radial-gradient(circle at top left, rgba(196, 100, 147, 0.05), transparent 24%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(252, 250, 247, 1));
+}
