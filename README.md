@@ -13,6 +13,9 @@ A luxury event planning website featuring weddings, private celebrations, and el
 
 ## 🚀 Quick Start
 
+
+
+
 ### **Prerequisites**
 - Node.js 18+ 
 - npm or yarn
