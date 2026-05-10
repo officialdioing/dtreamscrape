@@ -55,7 +55,7 @@ async function request<T = any>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const url = `${BACKEND_URL}${endpoint}`;
+  const url = `${getBackendUrl()}${endpoint}`;
   const headers = await getAuthHeaders();
 
   try {
@@ -274,7 +274,7 @@ export const backendApi = {
     list: () => request('/api/admin/media-library'),
     upload: (formData: FormData) => {
       // For file uploads, we need to use fetch directly without JSON
-      const url = `${BACKEND_URL}/api/admin/media-library/upload`;
+      const url = `${getBackendUrl()}/api/admin/media-library/upload`;
       return fetch(url, {
         method: 'POST',
         credentials: 'include',

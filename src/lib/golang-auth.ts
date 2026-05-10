@@ -54,13 +54,13 @@ import { getBackendUrl } from '@/src/lib/backend-url';
  */
 export const oauthLogin = {
   google: () => {
-    window.location.href = `${BACKEND_URL}/api/auth/google/login`
+    window.location.href = `${getBackendUrl()}/api/auth/google/login`
   },
   facebook: () => {
-    window.location.href = `${BACKEND_URL}/api/auth/facebook/login`
+    window.location.href = `${getBackendUrl()}/api/auth/facebook/login`
   },
   apple: () => {
-    window.location.href = `${BACKEND_URL}/api/auth/apple/login`
+    window.location.href = `${getBackendUrl()}/api/auth/apple/login`
   }
 }
 
@@ -68,7 +68,7 @@ export const oauthLogin = {
  * Traditional Login (username/password)
  */
 export async function login(credentials: LoginRequest): Promise<AuthResponse> {
-  const response = await fetch(`${BACKEND_URL}/api/auth/login`, {
+  const response = await fetch(`${getBackendUrl()}/api/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -94,7 +94,7 @@ export async function login(credentials: LoginRequest): Promise<AuthResponse> {
  * Register new user
  */
 export async function register(userData: RegisterRequest): Promise<AuthResponse> {
-  const response = await fetch(`${BACKEND_URL}/api/auth/register`, {
+  const response = await fetch(`${getBackendUrl()}/api/auth/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -119,7 +119,7 @@ export async function register(userData: RegisterRequest): Promise<AuthResponse>
  * Logout user
  */
 export async function logout(): Promise<void> {
-  await fetch(`${BACKEND_URL}/api/auth/logout`, {
+  await fetch(`${getBackendUrl()}/api/auth/logout`, {
     method: 'POST',
     credentials: 'include'
   })
@@ -131,7 +131,7 @@ export async function logout(): Promise<void> {
  * Change password for authenticated user
  */
 export async function changePassword(passwords: ChangePasswordRequest): Promise<void> {
-  const response = await fetch(`${BACKEND_URL}/api/auth/change-password`, {
+  const response = await fetch(`${getBackendUrl()}/api/auth/change-password`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -193,7 +193,7 @@ export async function getSession(): Promise<GolangSession | null> {
     const headers: Record<string, string> = {}
     headers['Authorization'] = `Bearer ${token}`
 
-    const response = await fetch(`${BACKEND_URL}/api/auth/me`, {
+    const response = await fetch(`${getBackendUrl()}/api/auth/me`, {
       credentials: 'include',
       headers
     })
@@ -242,7 +242,7 @@ export async function getSession(): Promise<GolangSession | null> {
  */
 export async function refreshAccessToken(): Promise<string | null> {
   try {
-    const response = await fetch(`${BACKEND_URL}/api/auth/refresh`, {
+    const response = await fetch(`${getBackendUrl()}/api/auth/refresh`, {
       method: 'POST',
       credentials: 'include'
     })
@@ -281,6 +281,15 @@ function setSession(authResponse: AuthResponse): void {
 
   localStorage.setItem(SESSION_KEY, JSON.stringify(sessionData))
   localStorage.setItem(TOKEN_EXPIRY_KEY, authResponse.expires_at)
+
+  // Set cookies for middleware authentication
+  const expiresAt = new Date(authResponse.expires_at)
+  const cookieOptions = `expires=${expiresAt.toUTCString()}; path=/; SameSite=Lax`
+
+  if (typeof document !== 'undefined') {
+    document.cookie = `access_token=${authResponse.access_token}; ${cookieOptions}`
+    document.cookie = `refresh_token=${authResponse.refresh_token}; ${cookieOptions}`
+  }
 }
 
 function getSessionFromStorage(): GolangSession | null {
@@ -297,6 +306,12 @@ function getSessionFromStorage(): GolangSession | null {
 function clearSession(): void {
   localStorage.removeItem(SESSION_KEY)
   localStorage.removeItem(TOKEN_EXPIRY_KEY)
+
+  // Clear cookies
+  if (typeof document !== 'undefined') {
+    document.cookie = 'access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
+    document.cookie = 'refresh_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
+  }
 }
 
 function updateSessionTokens(authResponse: Partial<AuthResponse>): void {
@@ -313,6 +328,21 @@ function updateSessionTokens(authResponse: Partial<AuthResponse>): void {
   localStorage.setItem(SESSION_KEY, JSON.stringify(updated))
   if (authResponse.expires_at) {
     localStorage.setItem(TOKEN_EXPIRY_KEY, authResponse.expires_at)
+  }
+
+  // Update cookies if new tokens are provided
+  if (authResponse.access_token || authResponse.refresh_token) {
+    const expiresAt = new Date(updated.expires_at)
+    const cookieOptions = `expires=${expiresAt.toUTCString()}; path=/; SameSite=Lax`
+
+    if (typeof document !== 'undefined') {
+      if (authResponse.access_token) {
+        document.cookie = `access_token=${authResponse.access_token}; ${cookieOptions}`
+      }
+      if (authResponse.refresh_token) {
+        document.cookie = `refresh_token=${authResponse.refresh_token}; ${cookieOptions}`
+      }
+    }
   }
 }
 
