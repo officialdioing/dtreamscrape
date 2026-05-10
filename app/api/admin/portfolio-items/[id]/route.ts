@@ -4,6 +4,7 @@ import { protectAdminRoute } from '@/src/lib/server-auth';
 import { revalidateTag } from 'next/cache';
 import { CACHE_TAGS } from '@/src/lib/cached-posts';
 import { triggerContentWebhook } from '@/src/lib/content-webhook';
+import { publishUpdate } from '@/src/lib/update-bus';
 
 /**
  * GET /api/admin/portfolio-items/[id]
@@ -100,6 +101,16 @@ export async function PUT(
       revalidateTag(CACHE_TAGS.PORTFOLIO_ITEM(item.id));
     }
 
+    // Publish real-time update
+    publishUpdate({
+      version: Date.now(),
+      type: 'content_update',
+      resource: 'portfolio',
+      action: 'update',
+      id: item?.id,
+      timestamp: new Date().toISOString(),
+    });
+
     void triggerContentWebhook('update', 'portfolio', {
       id: item?.id,
       slug: item?.slug,
@@ -161,6 +172,16 @@ export async function DELETE(
       revalidateTag(CACHE_TAGS.BLOG_POST(item.id));
       revalidateTag(CACHE_TAGS.PORTFOLIO_ITEM(item.id));
     }
+
+    // Publish real-time update
+    publishUpdate({
+      version: Date.now(),
+      type: 'content_update',
+      resource: 'portfolio',
+      action: 'delete',
+      id: item?.id,
+      timestamp: new Date().toISOString(),
+    });
 
     void triggerContentWebhook('delete', 'portfolio', {
       id: item?.id,

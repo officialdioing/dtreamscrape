@@ -3,6 +3,7 @@ import { supabaseAdmin } from '@/src/lib/supabase-admin';
 import { revalidateTag } from 'next/cache';
 import { SERVICES_CACHE_TAGS } from '@/src/lib/cached-services';
 import { triggerContentWebhook } from '@/src/lib/content-webhook';
+import { publishUpdate } from '@/src/lib/update-bus';
 
 const isUuid = (value: string) =>
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
@@ -93,6 +94,17 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   if (id) safeRevalidate(SERVICES_CACHE_TAGS.ITEM(String(id)));
   if ((item as any)?.id) safeRevalidate(SERVICES_CACHE_TAGS.ITEM(String((item as any).id)));
   if ((item as any)?.slug) safeRevalidate(SERVICES_CACHE_TAGS.ITEM(String((item as any).slug)));
+
+  // Publish real-time update
+  publishUpdate({
+    version: Date.now(),
+    type: 'content_update',
+    resource: 'service',
+    action: 'update',
+    id: (item as any)?.id || id,
+    timestamp: new Date().toISOString(),
+  });
+
   void triggerContentWebhook('update', 'service', {
     id: (item as any)?.id || id,
     slug: (item as any)?.slug,
@@ -114,6 +126,17 @@ export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id:
 
   safeRevalidate(SERVICES_CACHE_TAGS.LIST);
   if (id) safeRevalidate(SERVICES_CACHE_TAGS.ITEM(String(id)));
+
+  // Publish real-time update
+  publishUpdate({
+    version: Date.now(),
+    type: 'content_update',
+    resource: 'service',
+    action: 'delete',
+    id: id,
+    timestamp: new Date().toISOString(),
+  });
+
   void triggerContentWebhook('delete', 'service', { id });
   return NextResponse.json({ success: true });
 }

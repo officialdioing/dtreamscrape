@@ -5,6 +5,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { ScrollReveal } from '../ScrollReveal';
 import { useAutoRefresh } from '@/src/lib/hooks/useAutoRefresh';
+import { useLiveUpdates } from '@/src/lib/hooks/useLiveUpdates';
 
 type ServiceItem = {
   id: string;
@@ -51,6 +52,17 @@ export default function ServicesPage({ initialServices }: { initialServices?: Se
     enabled: true,
     refetchOnFocus: true,
     refetchOnVisibilityChange: true
+  });
+
+  // Real-time updates from admin changes
+  useLiveUpdates({
+    enabled: true,
+    onUpdate: (event) => {
+      if (event.type === 'content_update' && event.resource === 'service') {
+        console.log('🔄 Real-time services update received:', event);
+        void fetchServices();
+      }
+    },
   });
 
   return (

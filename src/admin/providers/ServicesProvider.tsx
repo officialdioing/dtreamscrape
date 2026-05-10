@@ -4,6 +4,7 @@ import { getBackendUrl } from '@/src/lib/backend-url';
 import React, { createContext, useContext, useEffect, useMemo, useState, useCallback } from 'react';
 import { useAuth } from '@/src/admin/providers/GolangAuthProvider';
 import { getAccessToken } from '@/src/lib/golang-auth';
+import { useLiveUpdates } from '@/src/lib/hooks/useLiveUpdates';
 
 export type ServiceItem = {
   id: string;
@@ -54,7 +55,7 @@ export function ServicesProvider({ children }: { children: React.ReactNode }) {
         headers['Authorization'] = `Bearer ${token}`;
       }
 
-      const res = await fetch(`${backendUrl}/api/admin/services`, {
+      const res = await fetch(`/api/admin/services`, {
         cache: 'no-store',
         headers
       });
@@ -72,6 +73,17 @@ export function ServicesProvider({ children }: { children: React.ReactNode }) {
       void refresh();
     }
   }, [isAuthenticated, refresh]);
+
+  // Real-time updates
+  useLiveUpdates({
+    enabled: isAuthenticated,
+    onUpdate: (event) => {
+      if (event.type === 'content_update' && event.resource === 'service') {
+        console.log('🔄 Real-time services update received:', event);
+        void refresh();
+      }
+    },
+  });
 
   const createService = async (payload: Partial<ServiceItem>) => {
     const backendUrl = getBackendUrl();

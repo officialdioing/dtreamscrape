@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Spinner } from '@/components/ui/spinner'
 import { cn } from '@/src/lib/utils'
 import { useToast } from '@/src/admin/toast/ToastProvider'
 import { MediaPickerModal } from '../components/MediaPickerModal'
@@ -488,7 +489,12 @@ export function BlogEditorPage({
                 <CardContent className="space-y-4">
                   {post.image ? (
                     <div className="aspect-video overflow-hidden rounded-lg bg-muted">
-                      <img src={post.image} alt="Featured" className="h-full w-full object-cover" />
+                      <img
+                        src={post.image}
+                        alt="Featured"
+                        className="h-full w-full object-cover"
+                        key={post.image}
+                      />
                     </div>
                   ) : null}
                   <Button
@@ -682,6 +688,7 @@ export function BlogEditorPage({
                                   src={block.content}
                                   alt={block.caption || 'Block image'}
                                   className="h-full w-full object-cover"
+                                  key={block.content}
                                 />
                               </div>
                             ) : null}

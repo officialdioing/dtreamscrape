@@ -6,6 +6,7 @@ import { ScrollReveal } from '../ScrollReveal';
 import type { BlogPost } from '@/src/lib/blog-posts';
 import { mapPortfolioItemToPublicPost } from '@/src/lib/public-posts';
 import { useAutoRefresh } from '@/src/lib/hooks/useAutoRefresh';
+import { useLiveUpdates } from '@/src/lib/hooks/useLiveUpdates';
 
 export function PortfolioPage({ initialPosts }: { initialPosts?: BlogPost[] }) {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -43,6 +44,17 @@ export function PortfolioPage({ initialPosts }: { initialPosts?: BlogPost[] }) {
     enabled: true,
     refetchOnFocus: true,
     refetchOnVisibilityChange: true
+  });
+
+  // Real-time updates from admin changes
+  useLiveUpdates({
+    enabled: true,
+    onUpdate: (event) => {
+      if (event.type === 'content_update' && event.resource === 'portfolio') {
+        console.log('🔄 Real-time portfolio update received:', event);
+        void fetchPosts();
+      }
+    },
   });
 
   useEffect(() => {

@@ -4,6 +4,7 @@ import { getBackendUrl } from '@/src/lib/backend-url';
 import React, { createContext, useContext, useEffect, useMemo, useState, useCallback } from 'react';
 import { useAuth } from '@/src/admin/providers/GolangAuthProvider';
 import { getAccessToken } from '@/src/lib/golang-auth';
+import { useLiveUpdates } from '@/src/lib/hooks/useLiveUpdates';
 
 type BlogPost = any;
 
@@ -167,12 +168,12 @@ export function BlogPostsProvider({ children }: { children: React.ReactNode }) {
       }
 
       console.log('📤 Blog Posts Request:', {
-        url: `${backendUrl}/api/admin/portfolio-items`,
+        url: `/api/admin/portfolio-items`,
         hasAuthHeader: !!headers['Authorization'],
         authHeaderLength: headers['Authorization']?.length,
       });
 
-      const res = await fetch(`${backendUrl}/api/admin/portfolio-items`, {
+      const res = await fetch(`/api/admin/portfolio-items`, {
         cache: 'no-store',
         headers
       });
@@ -216,6 +217,17 @@ export function BlogPostsProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(false);
     }
   }, [isAuthenticated]);
+
+  // Real-time updates
+  useLiveUpdates({
+    enabled: isAuthenticated,
+    onUpdate: (event) => {
+      if (event.type === 'content_update' && (event.resource === 'portfolio' || event.resource === 'blog')) {
+        console.log('🔄 Real-time blog update received:', event);
+        void refresh();
+      }
+    },
+  });
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -310,11 +322,10 @@ export function BlogPostsProvider({ children }: { children: React.ReactNode }) {
     };
 
     const routeKey = post?.id || post?.__raw?.id || post?.__raw?.slug || slug;
-    const backendUrl = getBackendUrl();
     const endpoint =
       mode === 'create'
-        ? `${backendUrl}/api/admin/portfolio-items`
-        : `${backendUrl}/api/admin/portfolio-items/${encodeURIComponent(routeKey)}`;
+        ? `/api/admin/portfolio-items`
+        : `/api/admin/portfolio-items/${encodeURIComponent(routeKey)}`;
     const method = mode === 'create' ? 'POST' : 'PUT';
 
     const token = getAccessToken();
@@ -343,7 +354,6 @@ export function BlogPostsProvider({ children }: { children: React.ReactNode }) {
   };
 
   const deletePost: BlogPostsContextValue['deletePost'] = async (id) => {
-    const backendUrl = getBackendUrl();
     const token = getAccessToken();
 
     const headers: Record<string, string> = {
@@ -354,7 +364,7 @@ export function BlogPostsProvider({ children }: { children: React.ReactNode }) {
       headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const res = await fetch(`${backendUrl}/api/admin/portfolio-items/${encodeURIComponent(id)}`, {
+    const res = await fetch(`/api/admin/portfolio-items/${encodeURIComponent(id)}`, {
       method: 'DELETE',
       headers
     });

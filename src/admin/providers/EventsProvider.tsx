@@ -50,7 +50,7 @@ export function EventsProvider({ children }: { children: React.ReactNode }) {
         headers['Authorization'] = `Bearer ${token}`;
       }
 
-      const res = await fetch(`${backendUrl}/api/admin/events`, {
+      const res = await fetch(`/api/admin/events`, {
         cache: 'no-store',
         signal: controller.signal,
         headers
