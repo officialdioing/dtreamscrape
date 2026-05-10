@@ -13,23 +13,50 @@ function sseFrame(event: string, data: unknown) {
 export async function GET(_request: NextRequest) {
   let pingTimer: ReturnType<typeof setInterval> | null = null;
   let unsubscribe = () => {};
+  let isClosed = false;
 
   const stream = new ReadableStream({
     start(controller) {
-      controller.enqueue(sseFrame('version', {
-        version: getContentVersion(),
-        timestamp: new Date().toISOString(),
-      }));
+      // Send initial version
+      if (!isClosed) {
+        controller.enqueue(sseFrame('version', {
+          version: getContentVersion(),
+          timestamp: new Date().toISOString(),
+        }));
+      }
 
+      // Subscribe to updates
       unsubscribe = subscribeToUpdates((event) => {
-        controller.enqueue(sseFrame('version', event));
+        if (!isClosed) {
+          try {
+            controller.enqueue(sseFrame('version', event));
+          } catch (error) {
+            console.error('Failed to enqueue SSE update:', error);
+            isClosed = true;
+            controller.close();
+          }
+        }
       });
 
+      // Send keep-alive ping every 15 seconds to prevent connection timeout
       pingTimer = setInterval(() => {
-        controller.enqueue(encoder.encode(': ping\n\n'));
-      }, 25000);
+        if (!isClosed) {
+          try {
+            controller.enqueue(encoder.encode(': ping\n\n'));
+          } catch (error) {
+            console.error('Failed to send ping:', error);
+            isClosed = true;
+            controller.close();
+          }
+        } else {
+          // Connection closed, stop ping timer
+          if (pingTimer) clearInterval(pingTimer);
+        }
+      }, 15000); // Reduced from 25s to 15s for better reliability
     },
     cancel() {
+      console.log('SSE stream cancelled');
+      isClosed = true;
       unsubscribe();
       if (pingTimer) clearInterval(pingTimer);
     },
@@ -39,7 +66,10 @@ export async function GET(_request: NextRequest) {
     headers: {
       'Content-Type': 'text/event-stream',
       'Cache-Control': 'no-cache, no-transform',
-      Connection: 'keep-alive',
+      'Connection': 'keep-alive',
+      'X-Accel-Buffering': 'no', // Disable nginx buffering
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': 'true',
     },
   });
 }
